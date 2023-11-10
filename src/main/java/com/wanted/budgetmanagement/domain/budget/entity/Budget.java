@@ -34,7 +34,7 @@ public class Budget {
     private BudgetCategory category;
 
     @Column
-    private int money;
+    private long money;
 
     @Temporal(TemporalType.DATE)
     private Date period;

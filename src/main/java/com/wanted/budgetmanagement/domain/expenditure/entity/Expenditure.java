@@ -23,7 +23,7 @@ public class Expenditure {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(length = 60)
     private String memo;
 
     @Temporal(TemporalType.DATE)
@@ -43,5 +43,5 @@ public class Expenditure {
     private boolean excludingTotal;
 
     @Column
-    private int money;
+    private long money;
 }

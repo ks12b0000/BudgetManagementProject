@@ -17,7 +17,7 @@ public class BudgetCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(length = 20)
     private String name;
 
 }
