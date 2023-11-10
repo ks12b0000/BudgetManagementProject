@@ -206,4 +206,4 @@
 <br/>
 
 ## ERD
-![](../../../../var/folders/xd/1jmcch3n3x1b72khkc9b21300000gn/T/TemporaryItems/NSIRD_screencaptureui_GaXg7L/스크린샷 2023-11-10 오후 3.16.46.png)
+<img width="470" alt="스크린샷 2023-11-10 오후 3 44 26" src="https://github.com/ks12b0000/wanted-pre-onboarding-budget-management/assets/102012155/ca9b4aa3-771d-466c-8924-7823cd9e1a04">
