@@ -1,5 +1,7 @@
 package com.wanted.budgetmanagement.api.user.controller;
 
+import com.wanted.budgetmanagement.api.user.dto.UserSignInResponse;
+import com.wanted.budgetmanagement.api.user.dto.UserSignInRequest;
 import com.wanted.budgetmanagement.api.user.dto.UserSignUpRequest;
 import com.wanted.budgetmanagement.api.user.service.UserService;
 import com.wanted.budgetmanagement.global.exception.BaseResponse;
@@ -9,10 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -33,6 +32,17 @@ public class UserController {
         userService.userSignUp(request);
 
         return ResponseEntity.created(URI.create("/api/users")).body(new BaseResponse(201, "유저 회원가입에 성공했습니다."));
+    }
+
+    @Operation(summary = "User 로그인 API", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @Tag(name = "Users")
+    @PostMapping("/signin")
+    public ResponseEntity userSignIn(@Validated @RequestBody UserSignInRequest request) {
+        UserSignInResponse response = userService.userSignIn(request);
+
+        return ResponseEntity.ok().body(new BaseResponse(200, "로그인에 성공했습니다.", response));
     }
 
 }

@@ -33,3 +33,6 @@ spring:
   sql:
     init:
       mode: always
+
+JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+JWT_ISSUER: ${JWT_ISSUER}
