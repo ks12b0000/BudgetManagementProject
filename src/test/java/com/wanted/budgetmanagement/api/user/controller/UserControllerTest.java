@@ -1,6 +1,7 @@
 package com.wanted.budgetmanagement.api.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wanted.budgetmanagement.api.user.dto.UserSignInRequest;
 import com.wanted.budgetmanagement.api.user.dto.UserSignUpRequest;
 import com.wanted.budgetmanagement.domain.user.entity.User;
 import com.wanted.budgetmanagement.domain.user.repository.UserRepository;
@@ -84,5 +85,74 @@ class UserControllerTest {
         resultActions.andExpect(status().isConflict())
                 .andExpect(jsonPath("code").value("409"))
                 .andExpect(jsonPath("message").value("중복된 이메일이 있습니다."));
+    }
+
+    @DisplayName("유저 로그인 성공")
+    @Test
+    void userSignIn() throws Exception {
+        // 테스트에 필요한 유저 저장
+        before();
+        // given
+        UserSignInRequest request = new UserSignInRequest("email@gmail.com", "password123");
+        String content = new ObjectMapper().writeValueAsString(request);
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/api/users/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+        );
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("code").value("200"))
+                .andExpect(jsonPath("message").value("로그인에 성공했습니다."));
+    }
+
+    @DisplayName("존재하지 않는 유저로 인한 로그인 실패")
+    @Test
+    void userSignInFail() throws Exception {
+        // 테스트에 필요한 유저 저장
+        before();
+        // given
+        UserSignInRequest request = new UserSignInRequest("email2@gmail.com", "password123");
+        String content = new ObjectMapper().writeValueAsString(request);
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/api/users/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+        );
+
+        // then
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("code").value("400"))
+                .andExpect(jsonPath("message").value("존재하지 않는 유저입니다."));
+    }
+
+    @DisplayName("잘못된 비밀번호로 인한 로그인 실패")
+    @Test
+    void userSignInFail2() throws Exception {
+        // 테스트에 필요한 유저 저장
+        before();
+        // given
+        UserSignInRequest request = new UserSignInRequest("email@gmail.com", "password1232");
+        String content = new ObjectMapper().writeValueAsString(request);
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/api/users/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+        );
+
+        // then
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("code").value("400"))
+                .andExpect(jsonPath("message").value("아이디 또는 비밀번호가 일치하지 않습니다."));
     }
 }
