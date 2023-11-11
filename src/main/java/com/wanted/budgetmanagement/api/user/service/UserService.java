@@ -1,21 +1,26 @@
 package com.wanted.budgetmanagement.api.user.service;
 
+import com.wanted.budgetmanagement.api.user.dto.UserSignInResponse;
+import com.wanted.budgetmanagement.api.user.dto.UserSignInRequest;
 import com.wanted.budgetmanagement.api.user.dto.UserSignUpRequest;
 import com.wanted.budgetmanagement.domain.user.entity.User;
 import com.wanted.budgetmanagement.domain.user.repository.UserRepository;
 import com.wanted.budgetmanagement.global.exception.BaseException;
+import com.wanted.budgetmanagement.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.DUPLICATE_EMAIL;
+import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final JwtProvider jwtProvider;
 
     private final PasswordEncoder encoder;
 
@@ -46,5 +51,22 @@ public class UserService {
             throw new BaseException(DUPLICATE_EMAIL);
         }
         return false;
+    }
+
+    @Transactional
+    public UserSignInResponse userSignIn(UserSignInRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new BaseException(NON_EXISTENT_USER));
+
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BaseException(LOGIN_USER_NOT_EXIST);
+        }
+
+        String jwtAccessToken = jwtProvider.generateAccessToken(user);
+        String jwtRefreshToken = jwtProvider.generateRefreshToken(user);
+
+        user.setRefresh_token(jwtRefreshToken);
+        UserSignInResponse response = new UserSignInResponse(jwtAccessToken, jwtRefreshToken);
+
+        return response;
     }
 }
