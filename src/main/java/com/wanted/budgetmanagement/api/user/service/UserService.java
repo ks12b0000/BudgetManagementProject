@@ -53,6 +53,13 @@ public class UserService {
         return false;
     }
 
+    /**
+     * 유저 로그인
+     * email로 유저를 찾고, 유저의 password와 입력받은 password가 일치하는지 확인 후 사용자가 로그인한다.
+     * 로그인 하면 accessToken, refreshToken 발급.
+     * @param request : email, password
+     * @return
+     */
     @Transactional
     public UserSignInResponse userSignIn(UserSignInRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new BaseException(NON_EXISTENT_USER));
