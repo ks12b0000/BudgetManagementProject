@@ -1,6 +1,7 @@
 package com.wanted.budgetmanagement.api.budget.service;
 
 import com.wanted.budgetmanagement.api.budget.dto.BudgetSettingRequest;
+import com.wanted.budgetmanagement.api.budget.dto.BudgetUpdateRequest;
 import com.wanted.budgetmanagement.domain.budget.entity.Budget;
 import com.wanted.budgetmanagement.domain.budget.repository.BudgetRepository;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
@@ -13,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.DUPLICATE_BUDGET;
-import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.NON_EXISTENT_CATEGORY;
+import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +57,22 @@ public class BudgetService {
         if (exists != null) {
             throw new BaseException(DUPLICATE_BUDGET);
         }
+    }
+
+    /**
+     * 예산 수정
+     * budgetId, money, user를 받아서 예산을 수정한다.
+     * 만약 없는 budgetId가 들어오면 예외 발생, 수정할 예산의 유저와 다를경우 예외 발생
+     * @param budgetId
+     * @param request : money
+     * @param user
+     */
+    @Transactional
+    public void budgetUpdate(Long budgetId, BudgetUpdateRequest request, User user) {
+        Budget budget = budgetRepository.findById(budgetId).orElseThrow(() -> new BaseException(NON_EXISTENT_BUDGET));
+        if (budget.getUser().getId() != user.getId()) {
+            throw new BaseException(FORBIDDEN_USER);
+        }
+        budget.updateBudget(request.getMoney());
     }
 }

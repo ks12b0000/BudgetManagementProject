@@ -38,4 +38,8 @@ public class Budget {
 
     @Temporal(TemporalType.DATE)
     private Date period;
+
+    public void updateBudget(long money) {
+        this.money = money;
+    }
 }
