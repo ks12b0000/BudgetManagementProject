@@ -9,9 +9,11 @@ import com.wanted.budgetmanagement.domain.user.entity.User;
 import com.wanted.budgetmanagement.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.DUPLICATE_BUDGET;
 import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.NON_EXISTENT_CATEGORY;
 
 @Service
@@ -23,13 +25,17 @@ public class BudgetService {
     private final BudgetCategoryRepository categoryRepository;
 
     /**
+     * 예산 설정
      * request에서 받은 categoryName으로 카테고리를 조회 후 존재하지 않은 카테고리면 예외처리하고,
      * request에서 받은 값들을 저장한다.
      * @param request : money, categoryName, period
      * @param user
      */
+    @Transactional
     public void budgetSetting(BudgetSettingRequest request, User user) {
         BudgetCategory category = categoryRepository.findByName(request.getCategoryName()).orElseThrow(() -> new BaseException(NON_EXISTENT_CATEGORY));
+        existsByBudget(request, user, category);
+
         Budget budget = Budget.builder()
                 .category(category)
                 .money(request.getMoney())
@@ -38,5 +44,18 @@ public class BudgetService {
                 .build();
 
         budgetRepository.save(budget);
+    }
+
+    /**
+     * 이미 설정한 예산이라면 예외처리.
+     * @param request
+     * @param user
+     * @param category
+     */
+    private void existsByBudget(BudgetSettingRequest request, User user, BudgetCategory category) {
+        Budget exists = budgetRepository.findByCategoryAndPeriodAndUser(category, request.getPeriod(), user);
+        if (exists != null) {
+            throw new BaseException(DUPLICATE_BUDGET);
+        }
     }
 }
