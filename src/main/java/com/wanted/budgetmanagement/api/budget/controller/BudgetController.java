@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,7 +27,7 @@ public class BudgetController {
     })
     @Tag(name = "Budgets")
     @PostMapping
-    public ResponseEntity budgetSetting(@RequestBody BudgetSettingRequest request, @AuthenticationPrincipal User user) {
+    public ResponseEntity budgetSetting(@Validated @RequestBody BudgetSettingRequest request, @AuthenticationPrincipal User user) {
         budgetService.budgetSetting(request, user);
 
         return ResponseEntity.ok().body(new BaseResponse<>(200, "예산 설정에 성공했습니다."));
@@ -37,7 +38,7 @@ public class BudgetController {
     })
     @Tag(name = "Budgets")
     @PatchMapping("/{budgetId}")
-    public ResponseEntity budgetUpdate(@PathVariable Long budgetId, @RequestBody BudgetUpdateRequest request, @AuthenticationPrincipal User user) {
+    public ResponseEntity budgetUpdate(@PathVariable Long budgetId, @Validated @RequestBody BudgetUpdateRequest request, @AuthenticationPrincipal User user) {
         budgetService.budgetUpdate(budgetId, request, user);
 
         return ResponseEntity.ok().body(new BaseResponse<>(200, "예산 수정에 성공했습니다."));
