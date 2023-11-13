@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +37,7 @@ class BudgetRepositoryTest {
         // given
         BudgetCategory category = new BudgetCategory(1L, "식비");
         categoryRepository.save(category);
-        Date date = new Date(20231023);
+        LocalDate date = LocalDate.parse("2023-11-11");
         User user = new User(1L, "email@gmail.com", "password", null);
         Budget budget = new Budget(1L, user, category, 100000, date);
 

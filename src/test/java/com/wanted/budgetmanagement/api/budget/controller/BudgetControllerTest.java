@@ -1,6 +1,7 @@
 package com.wanted.budgetmanagement.api.budget.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wanted.budgetmanagement.api.budget.dto.BudgetSettingRequest;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
 import com.wanted.budgetmanagement.domain.budgetCategory.repository.BudgetCategoryRepository;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.YearMonth;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,10 +41,11 @@ class BudgetControllerTest {
     @WithMockUser
     void budgetSetting() throws Exception {
         // given
+        YearMonth yearMonth = YearMonth.parse("2023-11");
         BudgetCategory category = new BudgetCategory(1L, "식비");
         categoryRepository.save(category);
-        BudgetSettingRequest request = new BudgetSettingRequest(100000, "식비", new Date(202311));
-        String content = new ObjectMapper().writeValueAsString(request);
+        BudgetSettingRequest request = new BudgetSettingRequest(100000, "식비", yearMonth);
+        String content = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(request);
 
         // when
         ResultActions resultActions = mvc.perform(post("/api/budgets")
@@ -53,8 +56,8 @@ class BudgetControllerTest {
         );
 
         // then
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("code").value("200"))
+        resultActions.andExpect(status().isCreated())
+                .andExpect(jsonPath("code").value("201"))
                 .andExpect(jsonPath("message").value("예산 설정에 성공했습니다."));
 
     }
@@ -64,8 +67,9 @@ class BudgetControllerTest {
     @WithMockUser
     void budgetSettingFail() throws Exception {
         // given
-        BudgetSettingRequest request = new BudgetSettingRequest(100000, "핸드폰비", new Date(202311));
-        String content = new ObjectMapper().writeValueAsString(request);
+        YearMonth yearMonth = YearMonth.parse("2023-11");
+        BudgetSettingRequest request = new BudgetSettingRequest(100000, "핸드폰비", yearMonth);
+        String content = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(request);
 
         // when
         ResultActions resultActions = mvc.perform(post("/api/budgets")
