@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Date;
 
@@ -28,5 +29,5 @@ public class BudgetSettingRequest {
     @Schema(description = "기간", example = "2023-11")
     @NotNull(message = "기간을 설정해주세요.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM", timezone = "Asia/Seoul")
-    private Date period;
+    private YearMonth period;
 }
