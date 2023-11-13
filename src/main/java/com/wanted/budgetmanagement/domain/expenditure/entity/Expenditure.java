@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -26,8 +27,7 @@ public class Expenditure {
     @Column(length = 60)
     private String memo;
 
-    @Temporal(TemporalType.DATE)
-    private Date period;
+    private LocalDate period;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId")

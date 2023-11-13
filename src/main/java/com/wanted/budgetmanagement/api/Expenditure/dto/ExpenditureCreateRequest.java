@@ -1,6 +1,5 @@
 package com.wanted.budgetmanagement.api.Expenditure.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -25,8 +25,7 @@ public class ExpenditureCreateRequest {
 
     @Schema(description = "지출 일시", example = "2023-11-13")
     @NotNull(message = "지출 일시를 설정해주세요.")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-DD", timezone = "Asia/Seoul")
-    private Date period;
+    private LocalDate period;
 
     @Schema(description = "메모", example = "저녁값으로 지출")
     private String memo;
