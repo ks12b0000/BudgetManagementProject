@@ -1,6 +1,7 @@
 package com.wanted.budgetmanagement.api.Expenditure.service;
 
 import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureCreateRequest;
+import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureUpdateRequest;
 import com.wanted.budgetmanagement.domain.budget.entity.Budget;
 import com.wanted.budgetmanagement.domain.budget.repository.BudgetRepository;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
@@ -10,15 +11,12 @@ import com.wanted.budgetmanagement.domain.expenditure.repository.ExpenditureRepo
 import com.wanted.budgetmanagement.domain.user.entity.User;
 import com.wanted.budgetmanagement.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Date;
 
-import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.NON_EXISTENT_BUDGET;
-import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.NON_EXISTENT_CATEGORY;
+import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -59,5 +57,25 @@ public class ExpenditureService {
         }
 
         budget.updateBudget(budget.getMoney() - request.getMoney());
+    }
+
+    /**
+     * 지출 수정
+     * money, memo, category, period을 수정한다.
+     * request에서 받은 categoryName으로 카테고리를 조회 후 존재하지 않은 카테고리면 예외 발생
+     * 존재하지 않는 expenditureId가 들어오면 예외 발생,
+     * 수정할 지출의 유저와 다를경우 예외 발생
+     * @param expenditureId
+     * @param request : money, memo, category, period
+     * @param user
+     */
+    @Transactional
+    public void expenditureUpdate(Long expenditureId, ExpenditureUpdateRequest request, User user) {
+        Expenditure expenditure = expenditureRepository.findById(expenditureId).orElseThrow(() -> new BaseException(NON_EXISTENT_EXPENDITURE));
+        BudgetCategory category = categoryRepository.findByName(request.getCategoryName()).orElseThrow(() -> new BaseException(NON_EXISTENT_CATEGORY));
+        if (expenditure.getUser().getId() != user.getId()) {
+            throw new BaseException(FORBIDDEN_USER);
+        }
+        expenditure.updateExpenditure(request, category);
     }
 }
