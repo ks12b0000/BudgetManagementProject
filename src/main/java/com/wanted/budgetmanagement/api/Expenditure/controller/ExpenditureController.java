@@ -1,6 +1,7 @@
 package com.wanted.budgetmanagement.api.Expenditure.controller;
 
 import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureCreateRequest;
+import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureUpdateRequest;
 import com.wanted.budgetmanagement.api.Expenditure.service.ExpenditureService;
 import com.wanted.budgetmanagement.domain.user.entity.User;
 import com.wanted.budgetmanagement.global.exception.BaseResponse;
@@ -11,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -35,5 +33,16 @@ public class ExpenditureController {
         expenditureService.expenditureCreate(request, user);
 
         return ResponseEntity.created(URI.create("/api/expenditures")).body(new BaseResponse<>(201, "지출 생성에 성공했습니다."));
+    }
+
+    @Operation(summary = "Expenditures 수정 API", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @Tag(name = "Expenditures")
+    @PatchMapping("/{expenditureId}")
+    public ResponseEntity budgetUpdate(@PathVariable Long expenditureId, @Validated @RequestBody ExpenditureUpdateRequest request, @AuthenticationPrincipal User user) {
+        expenditureService.expenditureUpdate(expenditureId, request, user);
+
+        return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 수정에 성공했습니다."));
     }
 }

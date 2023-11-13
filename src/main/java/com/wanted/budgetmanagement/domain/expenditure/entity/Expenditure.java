@@ -1,5 +1,6 @@
 package com.wanted.budgetmanagement.domain.expenditure.entity;
 
+import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureUpdateRequest;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
 import com.wanted.budgetmanagement.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -44,4 +45,11 @@ public class Expenditure {
 
     @Column
     private long money;
+
+    public void updateExpenditure(ExpenditureUpdateRequest request, BudgetCategory category) {
+        this.money = request.getMoney();
+        this.category = category;
+        this.period = request.getPeriod();
+        this.memo = request.getMemo();
+    }
 }
