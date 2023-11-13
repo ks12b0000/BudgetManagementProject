@@ -1,5 +1,7 @@
 package com.wanted.budgetmanagement.api.budget.service;
 
+import com.wanted.budgetmanagement.api.budget.dto.BudgetRecommendListResponse;
+import com.wanted.budgetmanagement.api.budget.dto.BudgetRecommendResponse;
 import com.wanted.budgetmanagement.api.budget.dto.BudgetSettingRequest;
 import com.wanted.budgetmanagement.api.budget.dto.BudgetUpdateRequest;
 import com.wanted.budgetmanagement.domain.budget.entity.Budget;
@@ -16,7 +18,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -118,6 +122,26 @@ class BudgetServiceTest {
         // when
         // then
         assertThatThrownBy(() -> budgetService.budgetUpdate(budget.getId(), request, failUser)).hasMessage("권한이 없는 유저입니다.");
+    }
+
+    @DisplayName("예산 추천 성공")
+    @Test
+    void budgetRecommend() {
+        // given
+        BudgetCategory category = new BudgetCategory(1L, "식비");
+        BudgetRecommendResponse recommendResponse = new BudgetRecommendResponse(category, 1000000L);
+        long totalAmount = 1000000L;
+        List<BudgetRecommendResponse> list = new ArrayList<>();
+        list.add(recommendResponse);
+
+        // stub
+        when(budgetRepository.findByAverage(totalAmount)).thenReturn(list);
+
+        // when
+        BudgetRecommendListResponse response = budgetService.budgetRecommend(totalAmount);
+
+        // then
+        assertThat(response.getResponseList().get(0).getAverage()).isEqualTo(1000000L);
     }
 
 }
