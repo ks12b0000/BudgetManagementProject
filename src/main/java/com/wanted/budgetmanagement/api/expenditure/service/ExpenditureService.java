@@ -107,7 +107,7 @@ public class ExpenditureService {
      * 지출 상세 조회
      * expenditureId로 지출 상세 조회한다.
      * 존재하지 않는 expenditureId가 들어오면 예외 발생,
-     * 수정할 지출의 유저와 다를경우 예외 발생
+     * 조회할 지출의 유저와 다를경우 예외 발생
      * @param expenditureId
      * @param user
      * @return
