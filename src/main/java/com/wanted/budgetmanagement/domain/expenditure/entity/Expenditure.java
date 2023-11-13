@@ -1,6 +1,6 @@
 package com.wanted.budgetmanagement.domain.expenditure.entity;
 
-import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureUpdateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureUpdateRequest;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
 import com.wanted.budgetmanagement.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -12,7 +12,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Getter

@@ -1,7 +1,8 @@
-package com.wanted.budgetmanagement.api.Expenditure.service;
+package com.wanted.budgetmanagement.api.expenditure.service;
 
-import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureCreateRequest;
-import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureUpdateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureCreateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureListResponse;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureUpdateRequest;
 import com.wanted.budgetmanagement.domain.budget.entity.Budget;
 import com.wanted.budgetmanagement.domain.budget.repository.BudgetRepository;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
@@ -9,7 +10,6 @@ import com.wanted.budgetmanagement.domain.budgetCategory.repository.BudgetCatego
 import com.wanted.budgetmanagement.domain.expenditure.entity.Expenditure;
 import com.wanted.budgetmanagement.domain.expenditure.repository.ExpenditureRepository;
 import com.wanted.budgetmanagement.domain.user.entity.User;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -153,5 +152,49 @@ class ExpenditureServiceTest {
         // when
         // then
         assertThatThrownBy(() -> expenditureService.expenditureUpdate(expenditure.getId(), request, failUser)).hasMessage("권한이 없는 유저입니다.");
+    }
+
+    @DisplayName("지출 목록 조회 성공")
+    @Test
+    void expenditureList() {
+        // given
+        LocalDate minPeriod = LocalDate.parse("2023-11-11");
+        LocalDate maxPeriod = LocalDate.parse("2023-11-23");
+        BudgetCategory category = new BudgetCategory(1L, "식비");
+        String categoryName = "식비";
+        long minMoney = 10000L;
+        long maxMoney = 20000L;
+        User user = new User(1L, "email@gmail.com", "password", null);
+
+        // stub
+        when(categoryRepository.findByName(categoryName)).thenReturn(Optional.of(category));
+
+        // when
+        ExpenditureListResponse listResponse = expenditureService.expenditureList(minPeriod, maxPeriod, categoryName, minMoney, maxMoney, user);
+
+        // then
+        assertAll(
+                () -> assertThat(listResponse.getExpenditureLists()).isNotNull(),
+                () -> assertThat(listResponse.getViewMoneyTotal()).isNotNull(),
+                () -> assertThat(listResponse.getTotalCategoryMoneyTotal()).isNotNull()
+        );
+    }
+
+    @DisplayName("지출 목록 조회 실패")
+    @Test
+    void expenditureListFail() {
+        // given
+        LocalDate minPeriod = LocalDate.parse("2023-11-11");
+        LocalDate maxPeriod = LocalDate.parse("2023-11-23");
+        BudgetCategory category = new BudgetCategory(1L, "식비");
+        String categoryName = "식비";
+        long minMoney = 10000L;
+        long maxMoney = 20000L;
+        User user = new User(1L, "email@gmail.com", "password", null);
+
+        // stub
+        // when
+        // then
+        assertThatThrownBy(() -> expenditureService.expenditureList(minPeriod, maxPeriod, categoryName, minMoney, maxMoney, user)).hasMessage("존재하지 않는 카테고리입니다.");
     }
 }

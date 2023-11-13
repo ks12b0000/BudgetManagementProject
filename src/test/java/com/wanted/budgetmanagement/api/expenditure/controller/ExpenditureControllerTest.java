@@ -1,8 +1,8 @@
-package com.wanted.budgetmanagement.api.Expenditure.controller;
+package com.wanted.budgetmanagement.api.expenditure.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureCreateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureCreateRequest;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
 import com.wanted.budgetmanagement.domain.budgetCategory.repository.BudgetCategoryRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
