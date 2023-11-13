@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -36,8 +37,7 @@ public class Budget {
     @Column
     private long money;
 
-    @Temporal(TemporalType.DATE)
-    private Date period;
+    private LocalDate period;
 
     public void updateBudget(long money) {
         this.money = money;
