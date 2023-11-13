@@ -1,5 +1,6 @@
 package com.wanted.budgetmanagement.domain.budget.repository;
 
+import com.wanted.budgetmanagement.api.budget.dto.BudgetRecommendResponse;
 import com.wanted.budgetmanagement.domain.budget.entity.Budget;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
 import com.wanted.budgetmanagement.domain.budgetCategory.repository.BudgetCategoryRepository;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,4 +52,18 @@ class BudgetRepositoryTest {
                 () -> assertThat(saveBudget.getPeriod()).isEqualTo(budget.getPeriod())
         );
     }
+
+    @DisplayName("예산 추천 쿼리 동작 확인")
+    @Test
+    void budgetRecommend() {
+        // given
+        long totalAmount = 1000000L;
+
+        // when
+        List<BudgetRecommendResponse> responses = budgetRepository.findByAverage(totalAmount);
+
+        // then
+        assertThat(responses).isNotNull();
+    }
+
 }

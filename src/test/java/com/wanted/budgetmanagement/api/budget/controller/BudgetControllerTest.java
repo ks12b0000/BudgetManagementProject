@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,6 +79,23 @@ class BudgetControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("code").value("400"))
                 .andExpect(jsonPath("message").value("존재하지 않는 카테고리입니다."));
+
+    }
+
+    @DisplayName("예산 추천 성공")
+    @Test
+    @WithMockUser
+    void budgetRecommend() throws Exception {
+        // given
+        long totalAmount = 1000000L;
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/api/budgets/recommend?totalAmount=" + totalAmount));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("code").value("200"))
+                .andExpect(jsonPath("message").value("예산 추천에 성공했습니다."));
 
     }
 }
