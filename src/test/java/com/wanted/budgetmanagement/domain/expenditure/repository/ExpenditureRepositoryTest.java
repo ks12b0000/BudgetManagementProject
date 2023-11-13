@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +47,32 @@ class ExpenditureRepositoryTest {
                 () -> assertThat(saveExpenditure.getPeriod()).isEqualTo(expenditure.getPeriod()),
                 () -> assertThat(saveExpenditure.getUser().getId()).isEqualTo(expenditure.getUser().getId()),
                 () -> assertThat(saveExpenditure.getMoney()).isEqualTo(expenditure.getMoney())
+
+        );
+
+    }
+
+    @DisplayName("지출 상세 조회")
+    @Test
+    void expenditureDetail() {
+        // given
+        BudgetCategory category = new BudgetCategory(1L, "식비");
+        categoryRepository.save(category);
+        User user = new User(1L, "email@gmail.com", "password", null);
+        LocalDate date = LocalDate.parse("2023-11-11");
+        Expenditure expenditure = new Expenditure(1L, "저녁값 지출", date, category, user, false, 20000L);
+        expenditureRepository.save(expenditure);
+
+        // when
+        Optional<Expenditure> expenditure1 = expenditureRepository.findById(expenditure.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(expenditure1.get().getCategory().getName()).isEqualTo(expenditure.getCategory().getName()),
+                () -> assertThat(expenditure1.get().getMemo()).isEqualTo(expenditure.getMemo()),
+                () -> assertThat(expenditure1.get().getPeriod()).isEqualTo(expenditure.getPeriod()),
+                () -> assertThat(expenditure1.get().getUser().getId()).isEqualTo(expenditure.getUser().getId()),
+                () -> assertThat(expenditure1.get().getMoney()).isEqualTo(expenditure.getMoney())
 
         );
 

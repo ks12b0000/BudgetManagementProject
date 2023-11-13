@@ -1,6 +1,7 @@
 package com.wanted.budgetmanagement.api.expenditure.service;
 
 import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureCreateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureDetailResponse;
 import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureListResponse;
 import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureUpdateRequest;
 import com.wanted.budgetmanagement.domain.budget.entity.Budget;
@@ -186,7 +187,6 @@ class ExpenditureServiceTest {
         // given
         LocalDate minPeriod = LocalDate.parse("2023-11-11");
         LocalDate maxPeriod = LocalDate.parse("2023-11-23");
-        BudgetCategory category = new BudgetCategory(1L, "식비");
         String categoryName = "식비";
         long minMoney = 10000L;
         long maxMoney = 20000L;
@@ -196,5 +196,63 @@ class ExpenditureServiceTest {
         // when
         // then
         assertThatThrownBy(() -> expenditureService.expenditureList(minPeriod, maxPeriod, categoryName, minMoney, maxMoney, user)).hasMessage("존재하지 않는 카테고리입니다.");
+    }
+
+    @DisplayName("지출 상세 조회 성공")
+    @Test
+    void expenditureDetail() {
+        // given
+        LocalDate date = LocalDate.parse("2023-11-11");
+        BudgetCategory category = new BudgetCategory(2L, "교통");
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Expenditure expenditure = new Expenditure(1L, "memo", date, category, user, false, 20000L);
+        Long expenditureId = 1L;
+
+        // stub
+        when(expenditureRepository.findById(expenditureId)).thenReturn(Optional.of(expenditure));
+
+        // when
+        ExpenditureDetailResponse response = expenditureService.expenditureDetail(expenditureId, user);
+
+        // then
+        assertAll(
+                () -> assertThat(response.getPeriod()).isEqualTo(expenditure.getPeriod()),
+                () -> assertThat(response.getCategoryName()).isEqualTo(expenditure.getCategory().getName()),
+                () -> assertThat(response.getMoney()).isEqualTo(expenditure.getMoney()),
+                () -> assertThat(response.getMemo()).isEqualTo(expenditure.getMemo())
+        );
+    }
+
+    @DisplayName("존재하지 않는 지출 아이디로 인한 지출 상세 조회 실패")
+    @Test
+    void expenditureDetailFail() {
+        // given
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Long expenditureId = 1L;
+
+        // stub
+        // when
+        // then
+        assertThatThrownBy(() -> expenditureService.expenditureDetail(expenditureId, user)).hasMessage("존재하지 않는 지출입니다.");
+    }
+
+    @DisplayName("조회할 지출의 유저와 다른 유저로 인한 지출 상세 조회 성공")
+    @Test
+    void expenditureDetailFail2() {
+        // given
+        LocalDate date = LocalDate.parse("2023-11-11");
+        BudgetCategory category = new BudgetCategory(2L, "교통");
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Expenditure expenditure = new Expenditure(1L, "memo", date, category, user, false, 20000L);
+        Long expenditureId = 1L;
+        User failUser = new User(2L, "email2@gmail.com", "password", null);
+
+        // stub
+        when(expenditureRepository.findById(expenditureId)).thenReturn(Optional.of(expenditure));
+
+        // when
+        // then
+        assertThatThrownBy(() -> expenditureService.expenditureDetail(expenditureId, failUser)).hasMessage("권한이 없는 유저입니다.");
+
     }
 }
