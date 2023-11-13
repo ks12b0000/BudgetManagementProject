@@ -1,9 +1,6 @@
 package com.wanted.budgetmanagement.api.expenditure.service;
 
-import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureCreateRequest;
-import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureList;
-import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureListResponse;
-import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureUpdateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.*;
 import com.wanted.budgetmanagement.domain.budget.entity.Budget;
 import com.wanted.budgetmanagement.domain.budget.repository.BudgetRepository;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
@@ -104,5 +101,25 @@ public class ExpenditureService {
         long totalCategoryMoneyTotal = expenditureRepository.findByTotalCategoryMoneyTotal(category, user);
 
         return new ExpenditureListResponse(expenditureList, viewMoneyTotal, totalCategoryMoneyTotal);
+    }
+
+    /**
+     * 지출 상세 조회
+     * expenditureId로 지출 상세 조회한다.
+     * 존재하지 않는 expenditureId가 들어오면 예외 발생,
+     * 수정할 지출의 유저와 다를경우 예외 발생
+     * @param expenditureId
+     * @param user
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ExpenditureDetailResponse expenditureDetail(Long expenditureId, User user) {
+        Expenditure expenditure = expenditureRepository.findById(expenditureId).orElseThrow(() -> new BaseException(NON_EXISTENT_EXPENDITURE));
+
+        if (expenditure.getUser().getId() != user.getId()) {
+            throw new BaseException(FORBIDDEN_USER);
+        }
+
+        return new ExpenditureDetailResponse(expenditure.getMemo(), expenditure.getPeriod(), expenditure.getCategory().getName(), expenditure.isExcludingTotal(), expenditure.getMoney());
     }
 }
