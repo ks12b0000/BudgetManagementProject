@@ -1,8 +1,8 @@
-package com.wanted.budgetmanagement.api.budget.controller;
+package com.wanted.budgetmanagement.api.Expenditure.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.wanted.budgetmanagement.api.budget.dto.BudgetSettingRequest;
+import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureCreateRequest;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
 import com.wanted.budgetmanagement.domain.budgetCategory.repository.BudgetCategoryRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -16,11 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.YearMonth;
-import java.util.Date;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-class BudgetControllerTest {
+class ExpenditureControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -36,19 +34,19 @@ class BudgetControllerTest {
     @Autowired
     private BudgetCategoryRepository categoryRepository;
 
-    @DisplayName("예산 설정 성공")
+    @DisplayName("존재하지 않은 예산으로 인한 지출 생성 실패")
     @Test
     @WithMockUser
-    void budgetSetting() throws Exception {
+    void expenditureCreateFail() throws Exception {
         // given
-        YearMonth yearMonth = YearMonth.parse("2023-11");
+        LocalDate date = LocalDate.parse("2023-11-11");
         BudgetCategory category = new BudgetCategory(1L, "식비");
         categoryRepository.save(category);
-        BudgetSettingRequest request = new BudgetSettingRequest(100000, "식비", yearMonth);
+        ExpenditureCreateRequest request = new ExpenditureCreateRequest(20000L, "식비", date, "저녁값 지출");
         String content = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(request);
 
         // when
-        ResultActions resultActions = mvc.perform(post("/api/budgets")
+        ResultActions resultActions = mvc.perform(post("/api/expenditures")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
                 .accept(MediaType.APPLICATION_JSON)
@@ -56,23 +54,23 @@ class BudgetControllerTest {
         );
 
         // then
-        resultActions.andExpect(status().isCreated())
-                .andExpect(jsonPath("code").value("201"))
-                .andExpect(jsonPath("message").value("예산 설정에 성공했습니다."));
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("code").value("400"))
+                .andExpect(jsonPath("message").value("존재하지 않는 예산입니다."));
 
     }
 
-    @DisplayName("예산 설정 실패")
+    @DisplayName("존재하지 않은 카테고리로 인한 지출 생성 실패")
     @Test
     @WithMockUser
-    void budgetSettingFail() throws Exception {
+    void expenditureCreateFail2() throws Exception {
         // given
-        YearMonth yearMonth = YearMonth.parse("2023-11");
-        BudgetSettingRequest request = new BudgetSettingRequest(100000, "핸드폰비", yearMonth);
+        LocalDate date = LocalDate.parse("2023-11-11");
+        ExpenditureCreateRequest request = new ExpenditureCreateRequest(20000L, "핸드폰비", date, "저녁값 지출");
         String content = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(request);
 
         // when
-        ResultActions resultActions = mvc.perform(post("/api/budgets")
+        ResultActions resultActions = mvc.perform(post("/api/expenditures")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
                 .accept(MediaType.APPLICATION_JSON)
@@ -83,23 +81,6 @@ class BudgetControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("code").value("400"))
                 .andExpect(jsonPath("message").value("존재하지 않는 카테고리입니다."));
-
-    }
-
-    @DisplayName("예산 추천 성공")
-    @Test
-    @WithMockUser
-    void budgetRecommend() throws Exception {
-        // given
-        long totalAmount = 1000000L;
-
-        // when
-        ResultActions resultActions = mvc.perform(get("/api/budgets/recommend?totalAmount=" + totalAmount));
-
-        // then
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("code").value("200"))
-                .andExpect(jsonPath("message").value("예산 추천에 성공했습니다."));
 
     }
 }

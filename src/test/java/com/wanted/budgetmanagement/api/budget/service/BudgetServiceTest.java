@@ -18,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,8 +47,9 @@ class BudgetServiceTest {
     @Test
     void budgetSetting() {
         // given
+        YearMonth yearMonth = YearMonth.parse("2023-11");
         BudgetCategory category = new BudgetCategory(1L, "식비");
-        BudgetSettingRequest request = new BudgetSettingRequest(100000, "식비", new Date(202311));
+        BudgetSettingRequest request = new BudgetSettingRequest(100000, "식비", yearMonth);
         User user = new User(1L, "email@gmail.com", "password", null);
 
         // stub
@@ -60,7 +63,8 @@ class BudgetServiceTest {
     @Test
     void budgetSettingFail() {
         // given
-        BudgetSettingRequest request = new BudgetSettingRequest(100000, "식비", new Date(202311));
+        YearMonth yearMonth = YearMonth.parse("2023-11");
+        BudgetSettingRequest request = new BudgetSettingRequest(100000, "식비", yearMonth);
         User user = new User(1L, "email@gmail.com", "password", null);
 
         // stub
@@ -74,9 +78,10 @@ class BudgetServiceTest {
     @Test
     void budgetUpdate() {
         // given
+        LocalDate date = LocalDate.parse("2023-11-11");
         User user = new User(1L, "email@gmail.com", "password", null);
         BudgetCategory category = new BudgetCategory(1L, "식비");
-        Budget budget = new Budget(1L, user, category, 10000, new Date(202311));
+        Budget budget = new Budget(1L, user, category, 10000, date);
 
         BudgetUpdateRequest request = new BudgetUpdateRequest(1000002);
 
@@ -94,9 +99,10 @@ class BudgetServiceTest {
     @Test
     void budgetUpdateFail() {
         // given
+        LocalDate date = LocalDate.parse("2023-11-11");
         User user = new User(1L, "email@gmail.com", "password", null);
         BudgetCategory category = new BudgetCategory(1L, "식비");
-        Budget budget = new Budget(1L, user, category, 10000, new Date(202311));
+        Budget budget = new Budget(1L, user, category, 10000, date);
 
         BudgetUpdateRequest request = new BudgetUpdateRequest(1000002);
 
@@ -110,9 +116,10 @@ class BudgetServiceTest {
     @Test
     void budgetUpdateFail2() {
         // given
+        LocalDate date = LocalDate.parse("2023-11-11");
         User user = new User(1L, "email@gmail.com", "password", null);
         BudgetCategory category = new BudgetCategory(1L, "식비");
-        Budget budget = new Budget(1L, user, category, 10000, new Date(202311));
+        Budget budget = new Budget(1L, user, category, 10000, date);
         User failUser = new User(2L, "email2@gmail.com", "password", null);
         BudgetUpdateRequest request = new BudgetUpdateRequest(1000002);
 

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,11 +39,11 @@ public class BudgetService {
     public void budgetSetting(BudgetSettingRequest request, User user) {
         BudgetCategory category = categoryRepository.findByName(request.getCategoryName()).orElseThrow(() -> new BaseException(NON_EXISTENT_CATEGORY));
         existsByBudget(request, user, category);
-
+        LocalDate date = LocalDate.of(request.getPeriod().getYear(), request.getPeriod().getMonth(), 1);
         Budget budget = Budget.builder()
                 .category(category)
                 .money(request.getMoney())
-                .period(request.getPeriod())
+                .period(date)
                 .user(user)
                 .build();
 
@@ -56,7 +57,8 @@ public class BudgetService {
      * @param category
      */
     private void existsByBudget(BudgetSettingRequest request, User user, BudgetCategory category) {
-        Budget exists = budgetRepository.findByCategoryAndPeriodAndUser(category, request.getPeriod(), user);
+        LocalDate date = LocalDate.of(request.getPeriod().getYear(), request.getPeriod().getMonth(), 1);
+        Budget exists = budgetRepository.findByCategoryAndPeriodAndUser(category, date, user);
         if (exists != null) {
             throw new BaseException(DUPLICATE_BUDGET);
         }

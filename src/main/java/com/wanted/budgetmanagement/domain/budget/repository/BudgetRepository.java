@@ -9,11 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 public interface BudgetRepository extends JpaRepository<Budget,Long> {
-    Budget findByCategoryAndPeriodAndUser(BudgetCategory category, Date period, User user);
+    Budget findByCategoryAndPeriodAndUser(BudgetCategory category, LocalDate period, User user);
 
     @Query("select new com.wanted.budgetmanagement.api.budget.dto.BudgetRecommendResponse(" +
             "category, round(:totalAmount  * ((round(sum(money) * 100 / (select sum(money) from Budget), 0)) / 100), 0) as average) " +
