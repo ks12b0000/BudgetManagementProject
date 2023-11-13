@@ -1,7 +1,7 @@
-package com.wanted.budgetmanagement.api.Expenditure.service;
+package com.wanted.budgetmanagement.api.expenditure.service;
 
-import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureCreateRequest;
-import com.wanted.budgetmanagement.api.Expenditure.dto.ExpenditureUpdateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureCreateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureUpdateRequest;
 import com.wanted.budgetmanagement.domain.budget.entity.Budget;
 import com.wanted.budgetmanagement.domain.budget.repository.BudgetRepository;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
@@ -9,7 +9,6 @@ import com.wanted.budgetmanagement.domain.budgetCategory.repository.BudgetCatego
 import com.wanted.budgetmanagement.domain.expenditure.entity.Expenditure;
 import com.wanted.budgetmanagement.domain.expenditure.repository.ExpenditureRepository;
 import com.wanted.budgetmanagement.domain.user.entity.User;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

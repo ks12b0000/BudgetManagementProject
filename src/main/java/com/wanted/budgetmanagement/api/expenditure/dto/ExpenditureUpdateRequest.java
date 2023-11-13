@@ -1,4 +1,4 @@
-package com.wanted.budgetmanagement.api.Expenditure.dto;
+package com.wanted.budgetmanagement.api.expenditure.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
