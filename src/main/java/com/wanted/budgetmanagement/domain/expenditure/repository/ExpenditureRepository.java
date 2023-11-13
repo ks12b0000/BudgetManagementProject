@@ -22,7 +22,7 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure,Long> {
                                                 @Param("category") BudgetCategory category, @Param("user") User user,
                                                 @Param("minMoney") long minMoney, @Param("maxMoney") long maxMoney);
 
-    @Query("select sum(money) " +
+    @Query("select ifNull(sum(money), 0) " +
             "from Expenditure " +
             "where category = :category AND period BETWEEN :minPeriod AND :maxPeriod " +
             "AND user = :user AND money >= :minMoney AND money <= :maxMoney AND excludingTotal = false")
@@ -30,7 +30,7 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure,Long> {
                               @Param("category") BudgetCategory category, @Param("user") User user,
                               @Param("minMoney") long minMoney, @Param("maxMoney") long maxMoney);
 
-    @Query("select sum(money) " +
+    @Query("select ifNull(sum(money), 0) " +
             "from Expenditure " +
             "where category = :category AND user = :user AND excludingTotal = false")
     long findByTotalCategoryMoneyTotal(@Param("category") BudgetCategory category, @Param("user") User user);
