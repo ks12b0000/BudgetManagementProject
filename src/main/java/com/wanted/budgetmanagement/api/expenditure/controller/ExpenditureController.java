@@ -1,6 +1,7 @@
 package com.wanted.budgetmanagement.api.expenditure.controller;
 
 import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureCreateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureDetailResponse;
 import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureListResponse;
 import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureUpdateRequest;
 import com.wanted.budgetmanagement.api.expenditure.service.ExpenditureService;
@@ -59,5 +60,16 @@ public class ExpenditureController {
         ExpenditureListResponse listResponse = expenditureService.expenditureList(minPeriod, maxPeriod, categoryName, minMoney, maxMoney, user);
 
         return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 목록 조회에 성공했습니다.", listResponse));
+    }
+
+    @Operation(summary = "Expenditures 상세 조회 API", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @Tag(name = "Expenditures")
+    @GetMapping("/{expenditureId}")
+    public ResponseEntity expenditureDetail(@PathVariable Long expenditureId, @AuthenticationPrincipal User user) {
+        ExpenditureDetailResponse response = expenditureService.expenditureDetail(expenditureId, user);
+
+        return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 상세 조회에 성공했습니다.", response));
     }
 }
