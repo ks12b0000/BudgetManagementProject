@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/budgets")
@@ -24,14 +26,14 @@ public class BudgetController {
     private final BudgetService budgetService;
 
     @Operation(summary = "Budget 설정 API", responses = {
-            @ApiResponse(responseCode = "200")
+            @ApiResponse(responseCode = "201")
     })
     @Tag(name = "Budgets")
     @PostMapping
     public ResponseEntity budgetSetting(@Validated @RequestBody BudgetSettingRequest request, @AuthenticationPrincipal User user) {
         budgetService.budgetSetting(request, user);
 
-        return ResponseEntity.ok().body(new BaseResponse<>(200, "예산 설정에 성공했습니다."));
+        return ResponseEntity.created(URI.create("/api/budgets")).body(new BaseResponse<>(201, "예산 설정에 성공했습니다."));
     }
 
     @Operation(summary = "Budget 수정 API", responses = {
