@@ -1,5 +1,6 @@
 package com.wanted.budgetmanagement.api.budget.controller;
 
+import com.wanted.budgetmanagement.api.budget.dto.BudgetRecommendListResponse;
 import com.wanted.budgetmanagement.api.budget.dto.BudgetSettingRequest;
 import com.wanted.budgetmanagement.api.budget.dto.BudgetUpdateRequest;
 import com.wanted.budgetmanagement.api.budget.service.BudgetService;
@@ -42,6 +43,17 @@ public class BudgetController {
         budgetService.budgetUpdate(budgetId, request, user);
 
         return ResponseEntity.ok().body(new BaseResponse<>(200, "예산 수정에 성공했습니다."));
+    }
+
+    @Operation(summary = "Budget 추천 API", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @Tag(name = "Budgets")
+    @GetMapping("/recommend")
+    public ResponseEntity budgetRecommend(@RequestParam long totalAmount) {
+        BudgetRecommendListResponse budgetRecommendListResponse = budgetService.budgetRecommend(totalAmount);
+
+        return ResponseEntity.ok().body(new BaseResponse<>(200, "예산 추천에 성공했습니다.", budgetRecommendListResponse));
     }
 
 }
