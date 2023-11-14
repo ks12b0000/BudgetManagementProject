@@ -72,4 +72,15 @@ public class ExpenditureController {
 
         return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 상세 조회에 성공했습니다.", response));
     }
+
+    @Operation(summary = "Expenditures 삭제 API", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @Tag(name = "Expenditures")
+    @DeleteMapping("/{expenditureId}")
+    public ResponseEntity expenditureDelete(@PathVariable Long expenditureId, @AuthenticationPrincipal User user) {
+        expenditureService.expenditureDelete(expenditureId, user);
+
+        return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 삭제에성공했습니다."));
+    }
 }

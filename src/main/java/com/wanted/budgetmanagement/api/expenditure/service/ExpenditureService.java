@@ -122,4 +122,23 @@ public class ExpenditureService {
 
         return new ExpenditureDetailResponse(expenditure.getMemo(), expenditure.getPeriod(), expenditure.getCategory().getName(), expenditure.isExcludingTotal(), expenditure.getMoney());
     }
+
+    /**
+     * 지출 삭제
+     * expenditureId로 지출을 삭제한다.
+     * 존재하지 않는 expenditureId가 들어오면 예외 발생,
+     * 삭제할 지출의 유저와 다를경우 예외 발생
+     * @param expenditureId
+     * @param user
+     */
+    @Transactional
+    public void expenditureDelete(Long expenditureId, User user) {
+        Expenditure expenditure = expenditureRepository.findById(expenditureId).orElseThrow(() -> new BaseException(NON_EXISTENT_EXPENDITURE));
+
+        if (expenditure.getUser().getId() != user.getId()) {
+            throw new BaseException(FORBIDDEN_USER);
+        }
+
+        expenditureRepository.delete(expenditure);
+    }
 }
