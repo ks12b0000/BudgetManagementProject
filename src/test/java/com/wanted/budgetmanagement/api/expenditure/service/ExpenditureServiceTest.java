@@ -255,4 +255,53 @@ class ExpenditureServiceTest {
         assertThatThrownBy(() -> expenditureService.expenditureDetail(expenditureId, failUser)).hasMessage("권한이 없는 유저입니다.");
 
     }
+
+    @DisplayName("지출 삭제 성공")
+    @Test
+    void expenditureDelete() {
+        // given
+        LocalDate date = LocalDate.parse("2023-11-11");
+        BudgetCategory category = new BudgetCategory(2L, "교통");
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Expenditure expenditure = new Expenditure(1L, "memo", date, category, user, false, 20000L);
+        Long expenditureId = 1L;
+
+        // stub
+        when(expenditureRepository.findById(expenditureId)).thenReturn(Optional.of(expenditure));
+
+        // when
+        expenditureService.expenditureDelete(expenditureId, user);
+        // then
+    }
+
+    @DisplayName("존재하지 않는 지출 아이디로 인한 지출 삭제 실패")
+    @Test
+    void expenditureDeleteFail() {
+        // given
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Long expenditureId = 1L;
+
+        // stub
+        // when
+        // then
+        assertThatThrownBy(() -> expenditureService.expenditureDelete(expenditureId, user)).hasMessage("존재하지 않는 지출입니다.");
+    }
+
+    @DisplayName("삭제할 지출의 유저와 다른 유저로 인한 지출 삭제 실패")
+    @Test
+    void expenditureDeleteFail2() {
+        LocalDate date = LocalDate.parse("2023-11-11");
+        BudgetCategory category = new BudgetCategory(2L, "교통");
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Expenditure expenditure = new Expenditure(1L, "memo", date, category, user, false, 20000L);
+        Long expenditureId = 1L;
+        User failUser = new User(2L, "email2@gmail.com", "password", null);
+
+        // stub
+        when(expenditureRepository.findById(expenditureId)).thenReturn(Optional.of(expenditure));
+
+        // when
+        // then
+        assertThatThrownBy(() -> expenditureService.expenditureDelete(expenditureId, failUser)).hasMessage("권한이 없는 유저입니다.");
+    }
 }

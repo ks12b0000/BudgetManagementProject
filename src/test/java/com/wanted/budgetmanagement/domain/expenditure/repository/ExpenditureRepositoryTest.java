@@ -77,4 +77,24 @@ class ExpenditureRepositoryTest {
         );
 
     }
+
+    @DisplayName("지출 삭제 성공")
+    @Test
+    void expenditureDelete() {
+        // given
+        BudgetCategory category = new BudgetCategory(1L, "식비");
+        categoryRepository.save(category);
+        User user = new User(1L, "email@gmail.com", "password", null);
+        LocalDate date = LocalDate.parse("2023-11-11");
+        Expenditure expenditure = new Expenditure(1L, "저녁값 지출", date, category, user, false, 20000L);
+        expenditureRepository.save(expenditure);
+
+        // when
+        expenditureRepository.delete(expenditure);
+        Optional<Expenditure> findExpenditure = expenditureRepository.findById(expenditure.getId());
+
+        // then
+        assertThat(findExpenditure).isEmpty();
+
+    }
 }
