@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.wanted.budgetmanagement.global.exception.BaseExceptionStatus.*;
@@ -160,5 +161,50 @@ public class ExpenditureService {
         }
 
         expenditure.excludingTotalUpdate(excludingTotal);
+    }
+
+    /**
+     * 지출 추천
+     * 오늘 날짜, 이번 달 마지막 날짜로 이번 달 남은 날의 기간을 구해 오늘 지출 금액을 추천한다.
+     * 예산이 초과된 카테고리의 최소 금액은 20,000원으로 설정.
+     * @param user
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ExpenditureRecommendResponse expenditureRecommend(User user) {
+        LocalDate today = LocalDate.now();
+        /** start는 예산을 처음 저장할 때 YearMonth로 저장했기 때문에 DB에서 찾을 때 사용하기 위함. */
+        LocalDate start = today.withDayOfMonth(1);
+        LocalDate end = today.withDayOfMonth(today.lengthOfMonth());
+        long period = ChronoUnit.DAYS.between(today, end);
+
+        List<ExpenditureRecommend> recommendList = budgetRepository.findByExpenditureRecommend(user, start, period);
+
+        String message = "이번 달 ";
+        long todayExpenditurePossibleTotal = 0;
+
+        for (int i = 0; i < recommendList.size(); i++) {
+            ExpenditureRecommend recommend = recommendList.get(i);
+            if (recommend.getTodayExpenditurePossibleMoney() <= 0) {
+                /** 예산 초과시 최소 지출 가능 금액 20,000으로 설정. */
+                recommend.setTodayExpenditurePossibleMoney(20000L);
+                /** 예산을 초과한 카테고리 이름을 message에 저장 */
+                message += recommend.getCategory().getName() + ",";
+            }
+            todayExpenditurePossibleTotal += recommend.getTodayExpenditurePossibleMoney();
+        }
+
+        /**
+         * 이번 달에 예산을 초과한 카테고리가 하나도 없다면 첫 번째 message 출력하고
+         * 이번 달에 예산을 초과한 카테고리가 하나라도 있으면 위 예산을 초과한 카테고리 이름 + 두 번째 message를 출력한다.
+         */
+        if (message.equals("이번 달 ")) {
+            message = "절약을 잘 실천하고 계시네요! 앞으로 남은 날도 절약을 위해 화이팅!";
+        } else {
+            message = message.substring(0, message.length() - 1);
+            message += "에 예산을 초과하셨네요! 오늘은 최소 20,000원 이하의 금액만 사용하시는걸 권장해 드리고 앞으로 남은 날은 조금 아껴 쓰셔야 하겠어요!";
+        }
+
+        return new ExpenditureRecommendResponse(recommendList, todayExpenditurePossibleTotal, message);
     }
 }
