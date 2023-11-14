@@ -304,4 +304,58 @@ class ExpenditureServiceTest {
         // then
         assertThatThrownBy(() -> expenditureService.expenditureDelete(expenditureId, failUser)).hasMessage("권한이 없는 유저입니다.");
     }
+
+    @DisplayName("지출 합계 제외 업데이트 성공")
+    @Test
+    void expenditureExceptUpdate() {
+        // given
+        LocalDate date = LocalDate.parse("2023-11-11");
+        BudgetCategory category = new BudgetCategory(2L, "교통");
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Expenditure expenditure = new Expenditure(1L, "memo", date, category, user, false, 20000L);
+        Long expenditureId = 1L;
+
+        // stub
+        when(expenditureRepository.findById(expenditureId)).thenReturn(Optional.of(expenditure));
+
+        // when
+        expenditureService.expenditureExceptUpdate(expenditureId, user, true);
+
+        // then
+        assertThat(expenditure.isExcludingTotal()).isTrue();
+
+    }
+
+    @DisplayName("존재하지 않는 지출 아이디로 인한 지출 합계 제외 업데이트 실패")
+    @Test
+    void expenditureExceptUpdateFail() {
+        // given
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Long expenditureId = 1L;
+
+        // stub
+        // when
+        // then
+        assertThatThrownBy(() -> expenditureService.expenditureExceptUpdate(expenditureId, user, true)).hasMessage("존재하지 않는 지출입니다.");
+
+    }
+
+    @DisplayName("업데이트할 지출의 유저와 다른 유저로 인한 지출 합계 제외 업데이트 실패")
+    @Test
+    void expenditureExceptUpdateFail2() {
+        // given
+        LocalDate date = LocalDate.parse("2023-11-11");
+        BudgetCategory category = new BudgetCategory(2L, "교통");
+        User user = new User(1L, "email@gmail.com", "password", null);
+        Expenditure expenditure = new Expenditure(1L, "memo", date, category, user, false, 20000L);
+        Long expenditureId = 1L;
+        User failUser = new User(2L, "email2@gmail.com", "password", null);
+
+        // stub
+        when(expenditureRepository.findById(expenditureId)).thenReturn(Optional.of(expenditure));
+
+        // then
+        assertThatThrownBy(() -> expenditureService.expenditureExceptUpdate(expenditureId, failUser, true)).hasMessage("권한이 없는 유저입니다.");
+
+    }
 }
