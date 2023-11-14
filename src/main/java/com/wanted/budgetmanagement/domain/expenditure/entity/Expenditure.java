@@ -51,4 +51,8 @@ public class Expenditure {
         this.period = request.getPeriod();
         this.memo = request.getMemo();
     }
+
+    public void excludingTotalUpdate(boolean excludingTotal) {
+        this.excludingTotal = excludingTotal;
+    }
 }

@@ -141,4 +141,24 @@ public class ExpenditureService {
 
         expenditureRepository.delete(expenditure);
     }
+
+    /**
+     * 지출 합계 제외 업데이트
+     * expenditureId, excludingTotal로 지출 합계 제외를 업데이트한다.
+     * 존재하지 않는 expenditureId가 들어오면 예외 발생,
+     * 업데이트할 지출의 유저와 다를경우 예외 발생
+     * @param expenditureId
+     * @param user
+     * @param excludingTotal : false = 합계 제외 안함, true = 합계 제외 함.
+     */
+    @Transactional
+    public void expenditureExceptUpdate(Long expenditureId, User user, boolean excludingTotal) {
+        Expenditure expenditure = expenditureRepository.findById(expenditureId).orElseThrow(() -> new BaseException(NON_EXISTENT_EXPENDITURE));
+
+        if (expenditure.getUser().getId() != user.getId()) {
+            throw new BaseException(FORBIDDEN_USER);
+        }
+
+        expenditure.excludingTotalUpdate(excludingTotal);
+    }
 }
