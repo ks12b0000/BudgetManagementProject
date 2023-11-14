@@ -83,4 +83,15 @@ public class ExpenditureController {
 
         return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 삭제에성공했습니다."));
     }
+
+    @Operation(summary = "Expenditures 합계 제외 업데이트 API", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @Tag(name = "Expenditures")
+    @PatchMapping("/except/{expenditureId}")
+    public ResponseEntity expenditureExceptUpdate(@PathVariable Long expenditureId, @AuthenticationPrincipal User user, @RequestParam boolean excludingTotal) {
+        expenditureService.expenditureExceptUpdate(expenditureId, user, excludingTotal);
+
+        return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 합계 제외 업데이트에 성공했습니다."));
+    }
 }
