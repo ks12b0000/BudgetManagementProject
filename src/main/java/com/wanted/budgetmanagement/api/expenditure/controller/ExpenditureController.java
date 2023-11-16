@@ -1,9 +1,6 @@
 package com.wanted.budgetmanagement.api.expenditure.controller;
 
-import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureCreateRequest;
-import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureDetailResponse;
-import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureListResponse;
-import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureUpdateRequest;
+import com.wanted.budgetmanagement.api.expenditure.dto.*;
 import com.wanted.budgetmanagement.api.expenditure.service.ExpenditureService;
 import com.wanted.budgetmanagement.domain.user.entity.User;
 import com.wanted.budgetmanagement.global.exception.BaseResponse;
@@ -93,5 +90,16 @@ public class ExpenditureController {
         expenditureService.expenditureExceptUpdate(expenditureId, user, excludingTotal);
 
         return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 합계 제외 업데이트에 성공했습니다."));
+    }
+
+    @Operation(summary = "Expenditures 추천 API", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @Tag(name = "Expenditures")
+    @GetMapping("/recommend")
+    public ResponseEntity expenditureRecommend(@AuthenticationPrincipal User user) {
+        ExpenditureRecommendResponse response = expenditureService.expenditureRecommend(user);
+
+        return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 추천에 성공했습니다.", response));
     }
 }
