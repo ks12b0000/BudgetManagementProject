@@ -102,4 +102,15 @@ public class ExpenditureController {
 
         return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 추천에 성공했습니다.", response));
     }
+
+    @Operation(summary = "Expenditures 안내 API", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @Tag(name = "Expenditures")
+    @GetMapping("/guide")
+    public ResponseEntity expenditureGuide(@AuthenticationPrincipal User user) {
+        ExpenditureGuideResponse response = expenditureService.expenditureGuide(user);
+
+        return ResponseEntity.ok().body(new BaseResponse<>(200, "지출 안내에 성공했습니다.", response));
+    }
 }
