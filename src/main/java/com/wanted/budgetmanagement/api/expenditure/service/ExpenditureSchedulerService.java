@@ -30,13 +30,18 @@ public class ExpenditureSchedulerService {
     public void expenditureRecommendScheduler() {
         List<User> users = userRepository.findAll();
         for (int i = 0; i < users.size(); i++) {
+            String message = "오늘의 카테고리별 지출 추천 금액: ";
             User user = users.get(i);
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             ExpenditureRecommendResponse response = expenditureService.expenditureRecommend(user);
 
             mailMessage.setTo(user.getEmail());
             mailMessage.setSubject("안녕하세요! BudgetManagement 서비스 입니다. 오늘의 지출 금액을 추천해드려요!");
-            mailMessage.setText(response.getMessage());
+            for (int j = 0; j < response.getRecommendList().size(); j++) {
+                message += " 카테고리: " + response.getRecommendList().get(j).getCategory().getName() +
+                        " 지출 가능 금액: " + response.getRecommendList().get(j).getTodayExpenditurePossibleMoney();
+            }
+            mailMessage.setText(message + " 오늘 지출 총 가능 금액: " + response.getTodayExpenditurePossibleTotal() +  " 메시지: " + response.getMessage());
             mailSender.send(mailMessage);
         }
 
