@@ -207,4 +207,35 @@ public class ExpenditureService {
 
         return new ExpenditureRecommendResponse(recommendList, todayExpenditurePossibleTotal, message);
     }
+
+    /**
+     * 지출 안내
+     * 오늘 날짜로 오늘 사용한 카테고리별 지출 금액, 총 지출 금액을 구하고
+     * 오늘 날짜, 이번 달 마지막 날짜로 이번 달 남은 날의 기간을 구해 오늘 사용했으면 적절한 금액을 구한다.
+     * 예산이 초과된 카테고리의 최소 금액은 20,000원으로 설정.
+     * @param user
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ExpenditureGuideResponse expenditureGuide(User user) {
+        LocalDate today = LocalDate.now();
+        LocalDate start = today.withDayOfMonth(1);
+        LocalDate end = today.withDayOfMonth(today.lengthOfMonth());
+        long period = ChronoUnit.DAYS.between(today, end);
+
+        List<ExpenditureGuide> list = expenditureRepository.findByExpenditureAmount(user, start, today, period);
+
+        long totalAmount = 0L;
+
+        for (int i = 0; i < list.size(); i++) {
+            ExpenditureGuide expenditureGuide = list.get(i);
+            if (expenditureGuide.getTodayAppropriateExpenditureAmount() <= 0) {
+                expenditureGuide.setTodayAppropriateExpenditureAmount(20000L);
+            }
+            totalAmount += expenditureGuide.getTodayExpenditureAmount();
+            expenditureGuide.setRisk(expenditureGuide.getTodayExpenditureAmount() * 100 / expenditureGuide.getTodayAppropriateExpenditureAmount() + "%");
+        }
+
+        return new ExpenditureGuideResponse(list, totalAmount);
+    }
 }

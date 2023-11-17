@@ -1,5 +1,6 @@
 package com.wanted.budgetmanagement.domain.expenditure.repository;
 
+import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureGuide;
 import com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureList;
 import com.wanted.budgetmanagement.domain.budgetCategory.entity.BudgetCategory;
 import com.wanted.budgetmanagement.domain.expenditure.entity.Expenditure;
@@ -34,4 +35,14 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure,Long> {
             "from Expenditure " +
             "where category = :category AND user = :user AND excludingTotal = false")
     long findByTotalCategoryMoneyTotal(@Param("category") BudgetCategory category, @Param("user") User user);
+
+    @Query("select new com.wanted.budgetmanagement.api.expenditure.dto.ExpenditureGuide(" +
+            "a.category, sum(a.money) as todayExpenditureAmount, " +
+            "(select round(sum(money) / :period, -3) from Budget where period = :start AND " +
+            "user = :user AND category = a.category) as todayAppropriateExpenditureAmount, '0%') " +
+            "from Expenditure a " +
+            "where a.user = :user AND a.period = :today " +
+            "group by category")
+    List<ExpenditureGuide> findByExpenditureAmount(@Param("user") User user, @Param("start") LocalDate start,
+                                                   @Param("today") LocalDate today, @Param("period") long period);
 }
