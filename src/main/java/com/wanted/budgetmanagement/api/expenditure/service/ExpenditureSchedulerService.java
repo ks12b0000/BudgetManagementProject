@@ -49,7 +49,7 @@ public class ExpenditureSchedulerService {
 
     @Transactional
 //    @Scheduled(initialDelay = 1000 ,fixedDelay = 60 * 60 * 1000)
-    @Scheduled(cron = "0 0 8 * * ?", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 20 * * ?", zone = "Asia/Seoul")
     public void expenditureGuideScheduler() {
         List<User> users = userRepository.findAll();
         for (int i = 0; i < users.size(); i++) {
