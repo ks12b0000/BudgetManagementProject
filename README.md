@@ -5,7 +5,7 @@
 <br/>
 
 ## 프로젝트 기간 
-2023-11-09 ~ 2023-11-17
+2023-11-09 ~ 2023-11-16
 
 <br/>
 
@@ -45,14 +45,16 @@
 <br/>
 [프로젝트 설계 및 일정관리 페이지](https://purple-knot-a8d.notion.site/a0f3cdc8e24b45f2a00d7105df36426f?pvs=4)
 
-<img width="600" alt="스크린샷 2023-11-15 오후 4 01 40" src="https://github.com/ks12b0000/BudgetManagementProject/assets/102012155/26852659-dfd6-4185-8f43-2bda4a9df9ff">
-<img width="600" alt="스크린샷 2023-11-15 오후 4 03 53" src="https://github.com/ks12b0000/BudgetManagementProject/assets/102012155/338212df-e77a-4c24-a24c-223fa6c24385">
+<img width="600" alt="스크린샷 2023-11-17 오후 6 37 39" src="https://github.com/ks12b0000/BudgetManagementProject/assets/102012155/36737b7f-521a-4343-b7cc-a1d5255c84eb">
+<img width="600" alt="스크린샷 2023-11-17 오후 6 38 07" src="https://github.com/ks12b0000/BudgetManagementProject/assets/102012155/91e47f79-2e7e-482c-859c-70b767d63ab1">
+
 
 <br/>
 
 ## API Reference
 <img src="https://img.shields.io/badge/Swagger-6DB33F?style=for-the-badge&logo=SWAGGER&logoColor=white">
-<img width="701" alt="스크린샷 2023-11-15 오후 3 27 55" src="https://github.com/ks12b0000/BudgetManagementProject/assets/102012155/dd03410d-fbce-406a-9559-2de46768c050">
+<img width="700" alt="스크린샷 2023-11-17 오후 6 38 56" src="https://github.com/ks12b0000/BudgetManagementProject/assets/102012155/590ba82b-92b3-4471-89ec-9488a3bee7b9">
+
 <br/>
 
 ## API 구현과정 및 고려사항
@@ -139,9 +141,6 @@
       - 매일 20:00시에 모든 유저에게 알림을 발송해 오늘의 지출 내역을 안내해줍니다.
         - 모든 유저한테 알림을 발송할 수 있게 위 로직을 가져와 사용하는 스케줄러 코드를 만들어 모든 유저의 맞는 지출 내역 안내 내용을 발송해줄 수 있도록 설정하였습니다.
         - ex) <img width="500" alt="스크린샷 2023-11-17 오후 6 31 54" src="https://github.com/ks12b0000/BudgetManagementProject/assets/102012155/03fce9c3-301e-4ccb-908b-b43b1176c18c">
-
-  - Expenditure 통계(완료 후 작성 아직 진행 중)
-      - [GET] /api/expenditure/statistics
             
 </details>
 
